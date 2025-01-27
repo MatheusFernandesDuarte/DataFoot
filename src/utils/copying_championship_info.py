@@ -9,6 +9,8 @@ from pandas import DataFrame
 class ExtractingChampionshipInfos():
     def __init__(self, driver) -> None:
         self.driver = driver
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+        driver.execute_script("document.body.style.zoom='10%'")
 
         self.games_df = self.extracting_championship_games()
         self.manipulating_df(games_df=self.games_df)

@@ -35,7 +35,7 @@ class Selenium:
 
         if visual:
             driver.maximize_window()
-
+            
         return driver
 
     def close_driver(self) -> None:

@@ -1,5 +1,7 @@
 import pandas as pd
 
+from datetime import datetime
+
 from src.utils.selenium import Selenium
 from src.utils.accesses import AccessingURLs
 from src.utils.copying_game_info import ExtractingGameInfos
@@ -10,10 +12,17 @@ def getting_data():
     AccessingURLs(selenium.driver).join_championship()
     
     games_df = ExtractingChampionshipInfos(selenium.driver).get_dataframe()
+    games_df['status'] = games_df['status'].astype(str)
 
     all_game_stats = {}
 
     for index, row in games_df.iterrows():
+        print(f"Processando jogo {index}: status={row['status']}")
+
+        if row['status'].strip().lower() != 'ft':
+            print(f"Pulado: {index}, com status {row['status']}")
+            continue
+        
         game_url = row['url']
         selenium.driver.get(game_url)
         

@@ -1,4 +1,5 @@
 import pandas as pd
+import time
 
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -8,6 +9,8 @@ from pandas import DataFrame
 class ExtractingGameInfos():
     def __init__(self, driver) -> None:
         self.driver = driver
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+        driver.execute_script("document.body.style.zoom='10%'")
         
         self.stats_df = self.copy_text()
         
@@ -54,6 +57,15 @@ class ExtractingGameInfos():
         stats_df = stats_df.reset_index().rename(columns={'index': 'Stats'})
         print(stats_df)
         return stats_df
+    
+    def scroll_until_visible(self, driver, element):
+        while True:
+            # Verifica se o elemento está visível
+            if element.is_displayed():
+                break
+            # Scrolla um pouco para baixo
+            driver.execute_script("window.scrollBy(0, 200);")
+            time.sleep(0.5)  # Pequena pausa para carregar o DOM
 
     def get_dataframe(self) -> DataFrame:
         """ Retorna o DataFrame já processado """
