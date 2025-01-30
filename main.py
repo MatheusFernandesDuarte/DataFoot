@@ -1,29 +1,53 @@
-from flask import Flask, jsonify
+from flask import Flask
+
+from src.modules.championship.championship_routes import championship_bp
 from src.repositories.db import db
 from src.utils.config import Config
 
-from src.modules.team.team_model import Team
-from src.modules.championship.championship_model import Championship
-from src.modules.player.player_model import Player
+def create_app() -> Flask:
+    """
+    Create and configure the Flask application.
 
-from src.modules.models.associations import championship_team_association
+    This function initializes the Flask application, loads configuration 
+    settings, connects to the database, and registers application blueprints.
 
-def create_app():
+    Steps:
+    1. Create a Flask instance.
+    2. Load configuration settings from the `Config` class.
+    3. Initialize the SQLAlchemy database extension with the app.
+    4. Register application blueprints (e.g., championship routes).
+    5. Create all database tables within the application context.
+
+    Returns:
+        Flask: The configured Flask application instance.
+    """
+
     app = Flask(__name__)
     app.config.from_object(Config)
 
     db.init_app(app)
 
-    with app.app_context():
-        db.metadata.clear()
-        db.create_all()
+    app.register_blueprint(championship_bp)
 
-    @app.route("/")
-    def home() -> dict[str, str]:
-        return jsonify({"message": "Hello World"}), 200
+    with app.app_context():
+        db.create_all()
+        print("✅ Database initialized successfully!")
 
     return app
 
 if __name__ == "__main__":
+    """
+    Entry point for running the Flask application.
+
+    - Calls `create_app()` to initialize the Flask app.
+    - Runs the app in debug mode on `0.0.0.0:5000`.
+    - Includes a safety check to ensure the app was initialized before starting.
+
+    If the application fails to initialize, an error message is printed.
+    """
     app = create_app()
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    if app:
+        print("🚀 Starting Flask application...")
+        app.run(debug=True, host="0.0.0.0", port=5000)
+    else:
+        print("🚨 ERROR: Flask app failed to initialize.")
