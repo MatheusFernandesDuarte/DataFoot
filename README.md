@@ -36,7 +36,7 @@ DataFoot/
 ## 🔧 How to Run the Project
 ### 1️⃣ **Clone the repository**
 ```bash
-git clone https://github.com/your-username/datafoot.git
+git clone https://github.com/MatheusFernandesDuarte/datafoot.git
 cd datafoot
 ```
 
